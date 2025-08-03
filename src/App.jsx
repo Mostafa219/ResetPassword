@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ResetPassword from "./Components/resetpasswordTemp/ResetPassword";
+import ResetPassword from "./Components/resetPassword/ResetPassword";
 import "./App.css";
 function App() {
   return (
