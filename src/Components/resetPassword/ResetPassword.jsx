@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import styles from "./ResetPassword.module.css";
 import { z } from "zod";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
-// Zod schema for email validation
-const resetPasswordSchema = z.object({
+const requestResetSchema = z.object({
   email: z.string().email("Invalid email address."),
 });
 
@@ -17,16 +15,13 @@ const ResetPassword = () => {
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  // Handles changes in the input field
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-    // Clear errors when the user starts typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: null }));
     }
@@ -35,14 +30,12 @@ const ResetPassword = () => {
     }
   };
 
-  // Handles the form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setApiError(null);
     setErrors({});
 
-    // Validate form data
-    const result = resetPasswordSchema.safeParse(formData);
+    const result = requestResetSchema.safeParse(formData);
     if (!result.success) {
       setErrors(result.error.flatten().fieldErrors);
       return;
@@ -51,51 +44,43 @@ const ResetPassword = () => {
     setLoading(true);
 
     try {
-      // Your API call for the password reset would go here
-      // const apiUrl = `${import.meta.env.VITE_API}/auth/customer/reset-password`;
-      // await axios.post(apiUrl, result.data);
-
-      console.log("Password reset request for:", result.data.email);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      console.log("Password reset link requested for:", result.data.email);
       toast.success(
-        "If an account with that email exists, a reset link has been sent."
+        "If an account exists for this email, a reset link has been sent."
       );
-
-      // For demonstration, navigate back to sign-in after 3 seconds
-      setTimeout(() => {
-        navigate("/signin");
-      }, 3000);
     } catch (error) {
-      console.error("Reset Password Error:", error.response || error);
+      console.error("Request Reset Link Error:", error.response || error);
       const errorMsg =
-        error.response?.data?.error || "An unexpected error occurred.";
+        error.response?.data?.error ||
+        "An unexpected error occurred. Please try again.";
       setApiError(errorMsg);
     } finally {
       setLoading(false);
     }
   };
 
-  // Style for displaying error messages
   const errorStyle = {
     color: "#d32f2f",
     fontSize: "0.8rem",
-    marginTop: "2px",
-    marginBottom: "2px",
+    marginTop: "4px",
   };
 
   return (
     <div className={styles.authContainer}>
-      {/* Image Section */}
       <div className={styles.authImageSection}>
-        <img src="/signUp/Dokany.jpg" alt="E-commerce Promotion" />
+        <img src="/signUp/Dokany.jpg" alt="Dokany E-commerce" />
       </div>
 
-      {/* Form Section */}
       <div className={styles.authFormSection}>
         <div className={styles.formWrapper}>
           <h2>Reset Password</h2>
           <p
-            className={styles.switchAuthLink}
-            style={{ marginBottom: "2rem", textAlign: "center" }}
+            style={{
+              textAlign: "center",
+              color: "#6c7275",
+              marginBottom: "2rem",
+            }}
           >
             Enter your email to receive a password reset link.
           </p>
@@ -112,6 +97,7 @@ const ResetPassword = () => {
                 {apiError}
               </p>
             )}
+
             <div className={styles.inputGroup}>
               <label htmlFor="email">Email</label>
               <input
