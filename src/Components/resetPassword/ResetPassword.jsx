@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "./ResetPassword.module.css";
-import { z } from "zod";
 import { toast } from "react-toastify";
+import { z } from "zod";
 
 const requestResetSchema = z.object({
   email: z.string().email("Invalid email address."),
